@@ -1,0 +1,31 @@
+{
+    "name": "Platform1",
+    "description": "",
+    "dependencies": {
+        "device": "*",
+        "pxt-arcade-rotsprite": "github:ChaseMor/pxt-arcade-rotsprite#b5b91d0f67e4df90ec703c36875c30afffbe653c",
+        "animation": "*",
+        "character-animations": "github:riknoll/character-animations#v0.3.0"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md",
+        "assets.json",
+        "tilemap.g.jres",
+        "tilemap.g.ts",
+        "images.g.jres",
+        "images.g.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "target": "1.3.44",
+        "targetId": "arcade"
+    },
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "blocksprj"
+}
