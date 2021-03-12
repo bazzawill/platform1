@@ -1,23 +1,26 @@
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    projectile = sprites.createProjectileFromSprite(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . 1 1 1 1 1 . . . . . . 
-        . . . . 1 3 3 3 3 3 1 . . . . . 
-        . . . . 1 3 3 3 3 3 1 . . . . . 
-        . . . . 1 3 3 3 3 3 1 . . . . . 
-        . . . . 1 3 3 3 3 3 1 . . . . . 
-        . . . . 1 3 3 3 3 3 1 . . . . . 
-        . . . . . 1 1 1 1 1 . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, dude, bulletV, 0)
-    projectile.setFlag(SpriteFlag.AutoDestroy, true)
+    if (bullets > 0) {
+        projectile = sprites.createProjectileFromSprite(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . 1 1 1 1 1 . . . . . . 
+            . . . . 1 3 3 3 3 3 1 . . . . . 
+            . . . . 1 3 3 3 3 3 1 . . . . . 
+            . . . . 1 3 3 3 3 3 1 . . . . . 
+            . . . . 1 3 3 3 3 3 1 . . . . . 
+            . . . . 1 3 3 3 3 3 1 . . . . . 
+            . . . . . 1 1 1 1 1 . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, dude, bulletV, 0)
+        projectile.setFlag(SpriteFlag.AutoDestroy, true)
+        bullets += -1
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile`, function (sprite, location) {
     info.changeLifeBy(-1)
@@ -50,6 +53,10 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     100,
     true
     )
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    bullets += 3
+    otherSprite.destroy()
 })
 function genGhostys () {
     ghosty = sprites.create(img`
@@ -98,6 +105,28 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleInsignia, func
         dude.setPosition(21, 200)
         info.changeScoreBy(10)
         level += 1
+        for (let index = 0; index < 5; index++) {
+            pubullet = sprites.create(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . 1 1 1 1 1 . . . . . . 
+                . . . . 1 3 3 3 3 3 1 . . . . . 
+                . . . . 1 3 3 3 3 3 1 . . . . . 
+                . . . . 1 3 3 3 3 3 1 . . . . . 
+                . . . . 1 3 3 3 3 3 1 . . . . . 
+                . . . . 1 3 3 3 3 3 1 . . . . . 
+                . . . . . 1 1 1 1 1 . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, SpriteKind.Food)
+            pubullet.setPosition(randint(0, 16 * 16), randint(0, 16 * 16))
+            pubullet.ay = gravity
+        }
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -108,9 +137,14 @@ let level = 0
 let ghosty: Sprite = null
 let ghosties = 0
 let projectile: Sprite = null
+let pubullet: Sprite = null
 let dude: Sprite = null
 let bulletV = 0
+let gravity = 0
+let bullets = 0
 let endlevel = 2
+bullets = 3
+gravity = 350
 bulletV = 200
 info.setScore(0)
 scene.setBackgroundColor(9)
@@ -137,7 +171,7 @@ dude = sprites.create(img`
 dude.setPosition(21, 87)
 scene.cameraFollowSprite(dude)
 controller.moveSprite(dude, 100, 0)
-dude.ay = 350
+dude.ay = gravity
 let Sharky = sprites.create(img`
     ................
     ................
@@ -178,7 +212,7 @@ let Sharky = sprites.create(img`
     `, SpriteKind.Enemy)
 Sharky.setPosition(345, 150)
 Sharky.setBounceOnWall(true)
-Sharky.ay = 350
+Sharky.ay = gravity
 let Sharky1 = sprites.create(img`
     ................
     ................
@@ -240,7 +274,29 @@ let Ducky = sprites.create(img`
 Ducky.setPosition(455, 240)
 Ducky.setBounceOnWall(true)
 Ducky.vx = 100
-Ducky.ay = 100
+Ducky.ay = gravity
+for (let index = 0; index < 5; index++) {
+    pubullet = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 1 1 1 1 1 . . . . . . 
+        . . . . 1 3 3 3 3 3 1 . . . . . 
+        . . . . 1 3 3 3 3 3 1 . . . . . 
+        . . . . 1 3 3 3 3 3 1 . . . . . 
+        . . . . 1 3 3 3 3 3 1 . . . . . 
+        . . . . 1 3 3 3 3 3 1 . . . . . 
+        . . . . . 1 1 1 1 1 . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Food)
+    pubullet.setPosition(randint(0, 64 * 16), randint(0, 16 * 16))
+    pubullet.ay = gravity
+}
 game.onUpdate(function () {
     if (Sharky.vy <= 0) {
         Sharky.setImage(img`
