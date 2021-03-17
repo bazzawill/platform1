@@ -154,6 +154,7 @@ let projectile: Sprite = null
 let dude: Sprite = null
 let bulletV = 0
 let bullets = 0
+game.splash("Use Arrow keys to move left and right", "Space to jump and x to shoot")
 let endlevel = 2
 bullets = 3
 let gravity = 350
