@@ -1,28 +1,31 @@
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.floorLight0, function (sprite, location) {
-    Mushroom = sprites.create(img`
-        . . . . . . b b b b . . . . . . 
-        . . . . b b 3 3 3 3 b b . . . . 
-        . . . c b 3 3 3 3 1 1 b c . . . 
-        . . c b 3 3 3 3 3 1 1 1 b c . . 
-        . c c 1 1 1 3 3 3 3 1 1 3 c c . 
-        c c d 1 1 1 3 3 3 3 3 3 3 b c c 
-        c b d d 1 3 3 3 3 3 1 1 1 b b c 
-        c b b b 3 3 1 1 3 3 1 1 d d b c 
-        c b b b b d d 1 1 3 b d d d b c 
-        . c b b b b d d b b b b b b c . 
-        . . c c b b b b b b b b c c . . 
-        . . . . c c c c c c c c . . . . 
-        . . . . . . b 1 1 b . . . . . . 
-        . . . . . . b 1 1 b b . . . . . 
-        . . . . . b b d 1 1 b . . . . . 
-        . . . . . b d d 1 1 b . . . . . 
-        `, SpriteKind.Food)
-    
-    tiles.placeOnTile(Mushroom, location)
-    Mushroom.vy = -100
-    Mushroom.ay = gravity
-    tiles.setTileAt(location, sprites.dungeon.darkGroundNorthWest0)
-    tiles.setWallAt(location, true)
+    if (dude.vy < 0) {
+        sprite.vy = 50
+    } else {
+        Mushroom = sprites.create(img`
+            . . . . . . b b b b . . . . . . 
+            . . . . b b 3 3 3 3 b b . . . . 
+            . . . c b 3 3 3 3 1 1 b c . . . 
+            . . c b 3 3 3 3 3 1 1 1 b c . . 
+            . c c 1 1 1 3 3 3 3 1 1 3 c c . 
+            c c d 1 1 1 3 3 3 3 3 3 3 b c c 
+            c b d d 1 3 3 3 3 3 1 1 1 b b c 
+            c b b b 3 3 1 1 3 3 1 1 d d b c 
+            c b b b b d d 1 1 3 b d d d b c 
+            . c b b b b d d b b b b b b c . 
+            . . c c b b b b b b b b c c . . 
+            . . . . c c c c c c c c . . . . 
+            . . . . . . b 1 1 b . . . . . . 
+            . . . . . . b 1 1 b b . . . . . 
+            . . . . . b b d 1 1 b . . . . . 
+            . . . . . b d d 1 1 b . . . . . 
+            `, SpriteKind.Food)
+        tiles.placeOnTile(Mushroom, location)
+        Mushroom.vy = -100
+        Mushroom.ay = gravity
+        tiles.setTileAt(location, sprites.dungeon.darkGroundNorthWest0)
+        tiles.setWallAt(location, true)
+    }
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (bullets > 0) {
@@ -54,6 +57,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile`, function (sprite, lo
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (dude.vy == 0) {
+        animation.stopAnimation(animation.AnimationTypes.All, dude)
         dude.vy = -180
     }
 })
@@ -180,11 +184,12 @@ let projectile: Sprite = null
 let Mushroom: Sprite = null
 let dude: Sprite = null
 let bulletV = 0
+let gravity = 0
 let bullets = 0
 game.splash("Use Arrow keys to move left and right", "Space to jump and x to shoot")
 let endlevel = 2
 bullets = 3
-let gravity = 350
+gravity = 350
 bulletV = 200
 info.setScore(0)
 scene.setBackgroundColor(9)
