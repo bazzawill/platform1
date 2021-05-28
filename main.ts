@@ -1,3 +1,7 @@
+namespace SpriteKind {
+    export const pickupBullet = SpriteKind.create()
+    export const pickupMushroom = SpriteKind.create()
+}
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.floorLight0, function (sprite, location) {
     if (dude.vy < 0) {
         sprite.vy = 50
@@ -19,13 +23,17 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.floorLight0, function (sp
             . . . . . . b 1 1 b b . . . . . 
             . . . . . b b d 1 1 b . . . . . 
             . . . . . b d d 1 1 b . . . . . 
-            `, SpriteKind.Food)
+            `, SpriteKind.pickupMushroom)
         tiles.placeOnTile(Mushroom, location)
         Mushroom.vy = -100
         Mushroom.ay = gravity
         tiles.setTileAt(location, sprites.dungeon.darkGroundNorthWest0)
         tiles.setWallAt(location, true)
     }
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.pickupBullet, function (sprite, otherSprite) {
+    bullets += 3
+    otherSprite.destroy()
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (bullets > 0) {
@@ -52,8 +60,13 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile`, function (sprite, location) {
-    info.changeLifeBy(-1)
-    dude.setPosition(21, 87)
+    if (mushroomActive) {
+        dude.ay = -150
+        mushroomActive = false
+    } else {
+        info.changeLifeBy(-1)
+        dude.setPosition(21, 87)
+    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (dude.vy == 0) {
@@ -63,38 +76,56 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     bulletV = -200
-    animation.runImageAnimation(
-    dude,
-    assets.animation`walkLeft`,
-    100,
-    true
-    )
+    if (mushroomActive) {
+        animation.runImageAnimation(
+        dude,
+        assets.animation`dudeMushroomL`,
+        100,
+        true
+        )
+    } else {
+        animation.runImageAnimation(
+        dude,
+        assets.animation`walkLeft`,
+        100,
+        true
+        )
+    }
 })
 function cleanup () {
     enemies = sprites.allOfKind(SpriteKind.Enemy)
     for (let value of enemies) {
         value.destroy()
     }
-    for (let ff of sprites.allOfKind(SpriteKind.Food)) {
+    for (let ff of sprites.allOfKind(SpriteKind.pickupBullet)) {
         ff.destroy()
     }
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.pickupMushroom, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    mushroomActive = true
+})
 scene.onOverlapTile(SpriteKind.Enemy, assets.tile`myTile`, function (sprite, location) {
     sprite.destroy()
     ghosties += -1
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     bulletV = 200
-    animation.runImageAnimation(
-    dude,
-    assets.animation`walkRight`,
-    100,
-    true
-    )
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
-    bullets += 3
-    otherSprite.destroy()
+    if (mushroomActive) {
+        animation.runImageAnimation(
+        dude,
+        assets.animation`dudeMushroomR`,
+        100,
+        true
+        )
+    } else {
+        animation.runImageAnimation(
+        dude,
+        assets.animation`walkRight`,
+        100,
+        true
+        )
+    }
 })
 function genGhostys () {
     ghosty = sprites.create(img`
@@ -180,6 +211,7 @@ let level = 0
 let ghosty: Sprite = null
 let ghosties = 0
 let enemies: Sprite[] = []
+let mushroomActive = false
 let projectile: Sprite = null
 let Mushroom: Sprite = null
 let dude: Sprite = null
@@ -337,7 +369,7 @@ let pubullet = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Food)
+    `, SpriteKind.pickupBullet)
 pubullet.setPosition(32, 100)
 pubullet.ay = gravity
 for (let index = 0; index < 5; index++) {
@@ -358,7 +390,7 @@ for (let index = 0; index < 5; index++) {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Food)
+        `, SpriteKind.pickupBullet)
     pubullet.setPosition(randint(0, 64 * 16), randint(0, 16 * 16))
     pubullet.ay = gravity
 }
@@ -509,24 +541,28 @@ game.onUpdate(function () {
         Sharky1.ay = 350
     }
     if (dude.vx == 0) {
-        dude.setImage(img`
-            . . . . . . f f f f . . . . . . 
-            . . . . f f f 2 2 f f f . . . . 
-            . . . f f f 2 2 2 2 f f f . . . 
-            . . f f f e e e e e e f f f . . 
-            . . f f e 2 2 2 2 2 2 e e f . . 
-            . . f e 2 f f f f f f 2 e f . . 
-            . . f f f f e e e e f f f f . . 
-            . f f e f b f 4 4 f b f e f f . 
-            . f e e 4 1 f d d f 1 4 e e f . 
-            . . f e e d d d d d d e e f . . 
-            . . . f e e 4 4 4 4 e e f . . . 
-            . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-            . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-            . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-            . . . . . f f f f f f . . . . . 
-            . . . . . f f . . f f . . . . . 
-            `)
+        if (mushroomActive) {
+            animation.stopAnimation(animation.AnimationTypes.All, dude)
+        } else {
+            dude.setImage(img`
+                . . . . . . f f f f . . . . . . 
+                . . . . f f f 2 2 f f f . . . . 
+                . . . f f f 2 2 2 2 f f f . . . 
+                . . f f f e e e e e e f f f . . 
+                . . f f e 2 2 2 2 2 2 e e f . . 
+                . . f e 2 f f f f f f 2 e f . . 
+                . . f f f f e e e e f f f f . . 
+                . f f e f b f 4 4 f b f e f f . 
+                . f e e 4 1 f d d f 1 4 e e f . 
+                . . f e e d d d d d d e e f . . 
+                . . . f e e 4 4 4 4 e e f . . . 
+                . . e 4 f 2 2 2 2 2 2 f 4 e . . 
+                . . 4 d f 2 2 2 2 2 2 f d 4 . . 
+                . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
+                . . . . . f f f f f f . . . . . 
+                . . . . . f f . . f f . . . . . 
+                `)
+        }
     }
     if (level == 1) {
         if (ghosties == 0) {
