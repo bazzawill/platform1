@@ -74,6 +74,10 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         dude.vy = -180
     }
 })
+function gitTest () {
+    gitT = 0
+    gitT += 1
+}
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     bulletV = -200
     if (mushroomActive) {
@@ -211,6 +215,7 @@ let level = 0
 let ghosty: Sprite = null
 let ghosties = 0
 let enemies: Sprite[] = []
+let gitT = 0
 let mushroomActive = false
 let projectile: Sprite = null
 let Mushroom: Sprite = null
