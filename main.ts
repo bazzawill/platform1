@@ -74,10 +74,6 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         dude.vy = -180
     }
 })
-function gitTest () {
-    gitT = 0
-    gitT += 1
-}
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     bulletV = -200
     if (mushroomActive) {
@@ -193,29 +189,39 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.collectibleInsignia, func
     // pubullet.setPosition(randint(0, 16 * 16), randint(0, 16 * 16))
     // pubullet.ay = gravity
     // }
-    if (level == 1) {
-        game.over(true)
-    } else {
+    if (level == 0) {
         tiles.setTilemap(tilemap`level2`)
         dude.setPosition(40, 230)
         info.changeScoreBy(10)
         level += 1
         cleanup()
+    } else if (level == 1) {
+        tiles.setTilemap(tilemap`level3`)
+        dude.setPosition(40, 230)
+        info.changeScoreBy(10)
+        level += 1
+        cleanup()
+    } else {
+        game.over(true)
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    info.changeLifeBy(-1)
-    if (level == 1) {
-        dude.setPosition(40, 210)
+    if (mushroomActive) {
+        otherSprite.destroy()
+        mushroomActive = false
     } else {
-        dude.setPosition(21, 0)
+        info.changeLifeBy(-1)
+        if (level == 1) {
+            dude.setPosition(40, 210)
+        } else {
+            dude.setPosition(21, 0)
+        }
     }
 })
 let level = 0
 let ghosty: Sprite = null
 let ghosties = 0
 let enemies: Sprite[] = []
-let gitT = 0
 let mushroomActive = false
 let projectile: Sprite = null
 let Mushroom: Sprite = null
