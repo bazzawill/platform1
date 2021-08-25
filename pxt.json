@@ -6,7 +6,8 @@
         "device": "*",
         "pxt-arcade-rotsprite": "github:ChaseMor/pxt-arcade-rotsprite#b5b91d0f67e4df90ec703c36875c30afffbe653c",
         "animation": "*",
-        "character-animations": "github:riknoll/character-animations#v0.3.0"
+        "character-animations": "github:riknoll/character-animations#v0.3.0",
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0"
     },
     "files": [
         "main.blocks",
@@ -22,7 +23,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "1.4.43",
+        "target": "1.5.46",
         "targetId": "arcade"
     },
     "supportedTargets": [
